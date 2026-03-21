@@ -13,11 +13,11 @@ API.interceptors.request.use((config) => {
     return config
 })
 
-export async function fetchUser() {
+export async function deleteKey() {
     try {
-        const response = await API.get('/api/profile/')
+        const response = await API.delete('api/keys/delete/');
         return response
     } catch (error) {
-        throw new Error(error.response?.data?.message || 'Пользователь не найден')
+        throw new Error(error.response?.data?.message || 'Ошибка при удалении ключа')
     }
 }

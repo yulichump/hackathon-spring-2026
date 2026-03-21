@@ -78,7 +78,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return full_name
 
 class Key(models.Model):
-    key_code = models.CharField(max_length=255, unique=True)
+    key_code = models.CharField(unique=True)
     status = models.ForeignKey(
         Status,
         on_delete=models.PROTECT,

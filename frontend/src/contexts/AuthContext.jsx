@@ -1,7 +1,9 @@
 import { createContext, useState, useContext, useEffect } from 'react';
-import { loginUser, logoutUser } from '../api/post_request';
+import { loginUser } from '../api/post_request';
+import { logoutUser } from '../api/refresh_request'; 
 import { fetchUser } from '../api/get_request';
 import toast from 'react-hot-toast';
+import { deleteKey } from '../api/delete_request';
 
 const AuthContext = createContext();
 
@@ -21,11 +23,14 @@ export const AuthProvider = ({ children }) => {
   const fetch = async () => {
     try {
       const response = fetchUser()
-      console.log(response)
-      setUser(response.data.user);
-      setIsAuthenticated(true)
+      if (response.data?.success) {
+        setUser(response.data.user);
+        setIsAuthenticated(true)
+      } else {
+        throw new Error('Пользователь не найден')
+      }
     } catch (error) {
-      console.error('Ошибка авторизации:', error);
+      console.log('Ошибка авторизации:', error.message);
       setIsAuthenticated(false)
     }
   };
@@ -33,12 +38,13 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await loginUser(email, password)
-      localStorage.setItem('access', response.data.access)
-      localStorage.setItem('refresh', response.data.refresh)
-      localStorage.setItem('user', JSON.stringify(response.data.user))
-      setUser(response.data.user)
-      setIsAuthenticated(true)
-      return {success: true}
+      if (response.data.success) {
+        setUser(response.data.user)
+        setIsAuthenticated(true)
+        return {success: true}
+      } else {
+        throw new Error('Непредвиденная ошибка')
+      }
     }
     catch (error) {
       setIsAuthenticated(false)
@@ -51,7 +57,20 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await logoutUser(token)
       if (response.success) {
-        toast.success('Сеанс успешно завершён!');
+        if (localStorage.getItem('activeKey')) {
+          try {
+            const response = deleteKey()
+            if (response.data.success) {
+              console.log('Ключ успешно удалён');
+            } else {
+              throw new Error('Ошибка при удалении ключа')
+            }
+          } catch {
+            console.error('Ошибка при удалении ключа');
+            throw new Error('Ошибка при удалении ключа')
+          }
+        }
+        toast.success('Сеанс успешно завершён');
       } else {
         throw new Error('Ошибка при выходе')
       }

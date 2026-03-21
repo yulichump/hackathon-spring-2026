@@ -48,7 +48,7 @@ function Login() {
   }, [errors.error])
 
   const validateLoginForm = () => {
-    return validateEmail(email) && validatePassword(password)
+    return validateEmail(email).success && validatePassword(password).success
   }
 
   return (
