@@ -5,6 +5,9 @@ import Login from './pages/Login';
 import Register from './pages/Registration';
 import Dashboard from './pages/Dashboard';
 import './App.css';
+import './styles/fonts.css';
+import './styles/typography.css';
+import './index.css';
 
 function AppRoutes() {
   const { user, isAuthenticated } = useAuth();
