@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { getKey } from '../api/post_request';
 import { ERROR_MESSAGE_TIME } from '../utils/DefaultValues';
 import { useNavigate } from 'react-router-dom';
+import AuthLayout from './AuthLayout';
 import { deleteKey } from '../api/delete_request';
 
 function Dashboard() {
@@ -15,7 +16,7 @@ function Dashboard() {
   const [isGenerate, setIsGenerate] = useState(false)
   const [error, setError] = useState('')
 
-  const {user, logout} = useAuth()
+  const { user, logout } = useAuth()
   const navigate = useNavigate()
 
   const generateQRCode = async () => {
@@ -44,17 +45,17 @@ function Dashboard() {
         setKey(response.data.decoded_qr)
         const expiryTime = Date.now() + 5 * 60 * 1000;
         setIsActive(true);
-        
+
         localStorage.setItem('activeKey', key);
         localStorage.setItem('keyExpiry', expiryTime);
-        
+
         toast.success('QR-код сгенерирован! Активен 5 минут');
-      } 
+      }
       else {
         throw new Error('Ошибка при генерации ключа')
       }
     } catch (error) {
-      toast.error('Ошибка при генерации ключа', {duration: ERROR_MESSAGE_TIME})
+      toast.error('Ошибка при генерации ключа', { duration: ERROR_MESSAGE_TIME })
     } finally {
       setTimeout(() => {
         setIsGenerate(false)
@@ -65,7 +66,7 @@ function Dashboard() {
   useEffect(() => {
     const savedKey = localStorage.getItem('activeKey');
     const savedExpiry = localStorage.getItem('keyExpiry');
-    
+
     if (savedKey && savedExpiry) {
       const now = Date.now();
       if (now < parseInt(savedExpiry)) {
@@ -93,7 +94,7 @@ function Dashboard() {
 
       const now = Date.now();
       const remaining = parseInt(expiry) - now;
-      
+
       if (remaining <= 0) {
         setIsActive(false);
         setKey(null);
@@ -125,7 +126,7 @@ function Dashboard() {
   }, [isActive, key]);
 
   const handleLogoutClick = () => {
-    logout();    
+    logout();
     navigate('/login')
   };
   const handleRegisterClick = () => {
@@ -133,73 +134,82 @@ function Dashboard() {
     toast.success('Приступайте к регистрации!');
   };
 
+  const headerButtons = (
+    <>
+      <button onClick={handleLogoutClick} className="link-button">
+        Выйти
+      </button>
+    </>
+  );
+
   return (
-    <div className="dashboard">
-      <div className="dashboard-header">
-        <div className="user-info">
-          <h2>👋 Добро пожаловать{user ? `, ${user.full_name}` : ''}!</h2>
-          {user && <p className="user-email">{user.email}</p>}
-          {user && <p className={user.role === 1 ? "user-role-admin" : '"user-role-staff"'}>{user.role === 1 ? "Администратор" : "Сотрудник"}</p>}
+    <AuthLayout
+      user={user?.full_name}           // имя пользователя
+      email={user?.email}              // email
+      headerButtons={headerButtons}    // кнопки
+    >
+      <div className="dashboard-page">
+        <div className="dashboard-header">
+          <div className="dashboard-user-info">
+            <h2>Добро пожаловать{user ? `, ${user.full_name}` : ''}!</h2>
+            {user && <p className="dashboard-user-email display-s">{user.email}</p>}
+            {user && <p className={user.role === 1 ? "dashboard-user-role-admin display-s" : "dashboard-user-role-staff display-s"}>{user.role === 1 ? "Администратор" : "Сотрудник"}</p>}
+            <div className="dashboard-header-buttons">
+
+              {user.role === 1 && (
+                <button onClick={handleRegisterClick} className="dashboard-btn">
+                  Регистрация
+                </button>
+              )}
+            </div>
+          </div >
 
         </div>
-        <button onClick={handleLogoutClick} className="logout-btn">
-          Выйти
-        </button>
-        <button onClick={handleRegisterClick} className="logout-btn">
-          Регистрация
-        </button>
-      </div>
-
-      {error && <div className="error-message">{error}</div>}
-      <div className="qr-container">
-        {!isActive ? (
-          <div className="qr-placeholder">
-            <button onClick={generateQRCode} className="generate-btn" disabled={isGenerate}>
-              🔘 Сгенерировать QR-код
-            </button>
-            <p className="info-text">
-              После генерации QR-код будет активен 5 минут
-            </p>
-          </div>
-        ) : (
-          <div className="qr-active">
-            <div className="qr-code">
-              <QRCodeSVG 
-                value={key} 
-                size={250}
-                bgColor="#ffffff"
-                fgColor="#000000"
-                level="H"
-                includeMargin={true}
-              />
-            </div>
-            
-            <div className="qr-info">
-              <div className="timer">
-                ⏱️ Осталось времени: <strong>{timeLeft}</strong>
-              </div>
-              <button 
-                onClick={generateQRCode} 
-                className="get-new-btn"
-                disabled={isGenerate}
-              >
-                🔄 Сгенерировать новый
+        {error && <div className="dashboard-error-message">{error}</div>}
+        <div className="dashboard-qr-container">
+          {!isActive ? (
+            <div className="dashboard-qr-placeholder">
+              <h1>Генерация пропуска</h1>
+              <p className="dashboard-info-text">
+                ⓘ После нажатия на кнопку вам будет предоставлен уникальный одноразовый пропуск в виде QR-кода. Приложите его на входе к сканеру чтобы пройти.
+              </p>
+              <p className="dashboard-info-text">
+                ⚠︎ Пропуск действует 5 минут. По истечении срока действия пропуска необходимо выпустить новый
+              </p>
+              <button onClick={generateQRCode} className="dashboard-generate-btn" disabled={isGenerate}>
+                Сгенерировать QR-код
               </button>
             </div>
-          </div>
-        )}
-      </div>
+          ) : (
+            <div className="dashboard-qr-active">
+              <div className="dashboard-qr-code">
+                <QRCodeSVG
+                  value={key}
+                  size={250}
+                  bgColor="#ffffff"
+                  fgColor="#000000"
+                  level="H"
+                  includeMargin={true}
+                />
+              </div>
 
-      <div className="info-panel">
-        <h3>📌 Информация</h3>
-        <ul>
-          <li>✅ QR-код активен 5 минут</li>
-          <li>✅ При сканировании передается уникальный ключ</li>
-          <li>✅ После сканирования ключ удаляется и нужно сгенерировать новый</li>
-          <li>✅ Также после истечения времени нужно сгенерировать новый код</li>
-        </ul>
+              <div className="dashboard-qr-info">
+                <div className="dashboard-timer">
+                  ⏱️ Осталось времени: <strong>{timeLeft}</strong>
+                </div>
+                <button
+                  onClick={generateQRCode}
+                  className="dashboard-get-new-btn"
+                  disabled={isGenerate}
+                >
+                  Сгенерировать QR
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </AuthLayout>
   );
 }
 

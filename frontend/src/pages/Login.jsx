@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 import { validateEmail, validatePassword } from '../utils/Validators';
 import './../styles/Login.css';
+import AuthLayout from './AuthLayout';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -52,78 +53,68 @@ function Login() {
   }
 
   return (
-    <div className="auth-page">
-      {/* Декоративные элементы */}
-      <div className="auth-ellipse-1"></div>
-      <div className="auth-ellipse-2"></div>
-      <div className="auth-top-bar"></div>
-      <div className="auth-bottom-bar"></div>
+    <AuthLayout>
+      <div className="auth-page">
 
-      {/* Логотип и доп. текст */}
-      <div className="auth-logo">
-        <img src="src/assets/logo.png" alt="RGB_RT_logo" />
-      </div>
-      <div className="auth-gen">By Gen lambda</div>
+        {/* Основной заголовок */}
+        <div className="auth-title">
+          <img src="src/assets/point.png" alt="ТОЧКА ВХОДА" />
+        </div>
 
-      {/* Основной заголовок */}
-      <div className="auth-title">
-        <img src="src/assets/point.png" />
+        {/* Форма авторизации */}
+        <div className="auth-container">
+          <h2 className="heading-h1">Вход в систему</h2>
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="form-group">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => {
+                  const check = validateEmail(email);
+                  if (!check.success) {
+                    setErrors(prev => ({ ...prev, error_email: check.error }));
+                  } else {
+                    setErrors(prev => ({ ...prev, error_email: null }));
+                  }
+                }}
+                onFocus={() => {
+                  setErrors(prev => ({ ...prev, error_email: null }));
+                }}
+                placeholder="Email"
+                className={errors.error_email ? 'error' : ''}
+              />
+              {errors.error_email && <div className="error-message description-s-regular">{errors.error_email}</div>}
+            </div>
+            <div className="form-group">
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onBlur={() => {
+                  const check = validatePassword(password);
+                  if (!check.success) {
+                    setErrors(prev => ({ ...prev, error_password: check.error }));
+                  } else {
+                    setErrors(prev => ({ ...prev, error_password: null }));
+                  }
+                }}
+                onFocus={() => {
+                  setErrors(prev => ({ ...prev, error_password: null }));
+                }}
+                placeholder="Пароль"
+                className={errors.error_password ? 'error' : ''}
+              />
+              {errors.error_password && <div className="error-message description-s-regular">{errors.error_password}</div>}
+            </div>
+            <button type="submit" className="auth-button body-s" disabled={isSend}>
+              {isSend ? 'Вход...' : 'Войти'}
+            </button>
+          </form>
+          {errors.error && <div className="error-message description-s-regular">{errors.error}</div>}
+        </div>
       </div>
-
-      {/* Форма авторизации */}
-      <div className="auth-container">
-        <h2>Вход в систему</h2>
-        <form onSubmit={handleSubmit} noValidate>
-          <div className="form-group">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onBlur={() => {
-                const check = validateEmail(email);
-                if (!check.success) {
-                  setErrors(prev => ({ ...prev, error_email: check.error }));
-                }
-              }}
-              onFocus={() => {
-                setErrors(prev => ({ ...prev, error_email: null }));
-              }}
-              required
-              placeholder="Email"
-              className={errors.error_email ? 'error' : ''}
-            />
-            {errors.error_email && <div className="error-message">{errors.error_email}</div>}
-          </div>
-          <div className="form-group">
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onBlur={() => {
-                const check = validatePassword(password);
-                if (!check.success) {
-                  setErrors(prev => ({ ...prev, error_password: check.error }));
-                }
-              }}
-              onFocus={() => {
-                setErrors(prev => ({ ...prev, error_password: null }));
-              }}
-              required
-              placeholder="Пароль"
-              className={errors.error_email ? 'error' : ''}
-            />
-            {errors.error_password && <div className="error-message">{errors.error_password}</div>}
-          </div>
-          <button type="submit" className="auth-button" disabled={isSend}>
-            Войти
-          </button>
-        </form>
-        {errors.error && <div className="error-message">{errors.error}</div>}
-      </div>
-      {/* Футер */}
-      <div className="auth-copyright">© 2026 “Точка входа”</div>
-      <div className="auth-support">Служба поддержки<br />8 800 555 35 35</div>
-    </div>
+    </AuthLayout>
   );
 }
 
