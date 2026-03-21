@@ -179,27 +179,31 @@ function Register() {
         </div>
         <div className="form-group">
           <label>Роль</label>
-          <div className='roles'>
-            <label>
-              <input
-                className='radio-button'
-                type="radio"
-                name="Aдмин"
-                checked={role_id === 1}
-                onChange={() => setRole_id(1)}
-                />
-              <h3></h3>
-            </label> 
-            <label>
-              Пользователь
-              <input
-                className='radio-button'    
-                type="radio"
-                name="Пользователь"
-                checked={role_id === 2}
-                onChange={() => setRole_id(2)}
-                />
-            </label> 
+          <div className='roles-group'>
+            <div className='role'>
+              <label>
+                Администратор
+                <input
+                  className='radio-button'
+                  type="radio"
+                  name="Aдмин"
+                  checked={role_id === 1}
+                  onChange={() => setRole_id(1)}
+                  />
+              </label>
+            </div>
+            <div className='role'>
+              <label>
+                Пользователь
+                <input
+                  className='radio-button'    
+                  type="radio"
+                  name="Пользователь"
+                  checked={role_id === 2}
+                  onChange={() => setRole_id(2)}
+                  />
+              </label>
+            </div>  
           </div>
         </div>
         <button type="submit" className="auth-button">

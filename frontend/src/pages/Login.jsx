@@ -57,7 +57,7 @@ function Login() {
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Email</label>
-          {errors.error_email && <div className="error-message">{errors.error_email}</div>}
+          {email && errors.error_email && <div className="error-message">{errors.error_email}</div>}
           <input
             type="email"
             value={email}
@@ -77,7 +77,7 @@ function Login() {
         </div>
         <div className="form-group">
           <label>Пароль</label>
-          {errors.error_password && <div className="error-message">{errors.error_password}</div>}
+          {password && errors.error_password && <div className="error-message">{errors.error_password}</div>}
           <input
             type="password"
             value={password}

@@ -65,13 +65,13 @@ div:has(> form) > a:hover{
   text-decoration: underline;
 }
 
-.roles {
+.roles-group {
   display: flex;
   gap: 20px; /* Расстояние между кнопками */
   align-items: center;
 }
 
-.roles label {
+.roles-group label {
   display: flex;
   align-items: center;
   gap: 8px; /* Расстояние между радиокнопкой и текстом */
