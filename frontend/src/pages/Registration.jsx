@@ -215,7 +215,7 @@ function Register() {
               type="checkbox"
               checked={isAdmin}
               onChange={(e) => setIsAdmin(e.target.checked)}
-            /> Администратор
+            />Администратор
           </label>
         </div>
         <button type="submit" className="auth-button" disabled={isSend}>

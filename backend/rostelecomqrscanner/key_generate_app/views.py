@@ -1,4 +1,4 @@
-import base64
+import hashlib
 import json
 from datetime import datetime
 import qrcode
@@ -430,7 +430,7 @@ def key_detail(request: HttpRequest, key_id: int):
     except Key.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Key not found'}, status=400)
     except Exception as ex:
-        return JsonResponse({'success': False, 'error': str(ex)}, status=500)
+        return JsonResponse({'success': False, 'error': str(ex.print_with_stacktrace())}, status=500)
 
 class KeyCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -444,10 +444,12 @@ class KeyCreateView(APIView):
 
             buffer = BytesIO()
             qr_img.save(buffer, format='PNG')
-            encoded_qr = base64.b64encode(buffer.getvalue()).decode()
+            # encoded_qr = base64.b64encode(buffer.getvalue()).decode()
+
+            key_hash = hashlib.sha256(json_data.encode()).hexdigest()
 
             key = Key.objects.create(
-                key_code=encoded_qr,
+                key_code=key_hash,
                 created_at=datetime.now(),
                 user_id=user_data['id'],
                 status_id=1

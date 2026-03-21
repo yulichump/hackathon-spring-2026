@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import toast from 'react-hot-toast';
 import '../styles/Dashboard.css';
 import { useAuth } from '../contexts/AuthContext';
-import { getKey } from '../api/get_request';
+import { getKey } from '../api/post_request';
 import { ERROR_MESSAGE_TIME } from '../utils/DefaultValues';
 import { useNavigate } from 'react-router-dom';
+import { deleteKey } from '../api/delete_request';
 
 function Dashboard() {
   const [key, setKey] = useState(null)
@@ -18,17 +19,29 @@ function Dashboard() {
   const navigate = useNavigate()
 
   const generateQRCode = async () => {
+
     if (isActive) {
       localStorage.removeItem('activeKey');
       localStorage.removeItem('keyExpiry');
+      try {
+        const response = deleteKey()
+        if (response.data.success) {
+          console.log('Ключ успешно удалён')
+        } else {
+          console.error('Ошибка при удалении ключа')
+        }
+      } catch {
+        console.error('Ошибка при удалении ключа')
+      }
       setIsActive(false)
     }
 
     try {
       setIsGenerate(true)
       const response = await getKey()
-      if (response.success) {
-        setKey(response.data.key)
+      console.log(response)
+      if (response.data.success) {
+        setKey(response.data.decoded_qr)
         const expiryTime = Date.now() + 5 * 60 * 1000;
         setIsActive(true);
         
@@ -85,9 +98,21 @@ function Dashboard() {
         setIsActive(false);
         setKey(null);
         setTimeLeft(null);
+
         localStorage.removeItem('activeKey');
         localStorage.removeItem('keyExpiry');
+        
         toast.error('Время действия ключа истекло');
+        try {
+          const response = deleteKey()
+          if (response.data.success) {
+            console.log('Ключ успешно удалён');
+          } else {
+            throw new Error('Ошибка при удалении')
+          }
+        } catch {
+          console.error('Ошибка при удалении ключа');
+        }
         clearInterval(interval);
       } else {
         const minutes = Math.floor(remaining / 60000);

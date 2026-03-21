@@ -5,7 +5,7 @@ const API = axios.create({
 })
 
 API.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('access')
     if (token) {
         config.headers.Authorization = `Bearer ${token}`
     }
@@ -21,7 +21,17 @@ export async function loginUser(_email, _password) {
         }
         const jsonUserData = JSON.stringify(userData)
         const response = await API.post('api/login/', jsonUserData);
+
         console.log(response)
+
+        if (response.data.access && response.data.refresh) {
+            localStorage.setItem('access', response.data.access);
+            localStorage.setItem('refresh', response.data.refresh);
+            localStorage.setItem('user', JSON.stringify(response.data.user))
+        } else {
+            throw new Error('Ошибка авторизации: некорректные данные с сервера')
+        }
+        
         return response
     } catch (error) {
         throw new Error(error.response?.data?.message || 'Ошибка авторизации')
@@ -39,13 +49,11 @@ export async function registerUser(userData) {
     }
 }
 
-export async function logoutUser(refresh_token) {
+export async function getKey() {
     try {
-        const jsonUserData = JSON.stringify({'refresh': refresh_token})
-        const response = await API.post('api/logout/', jsonUserData);
-        console.log(response)
+        const response = await API.post('api/keys/create/');
         return response
     } catch (error) {
-        throw new Error(error.response?.data?.message || 'Ошибка авторизации')
+        throw new Error(error.response?.data?.message || 'Ошибка при генерации ключа')
     }
 }
