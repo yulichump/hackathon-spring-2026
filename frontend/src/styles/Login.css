@@ -34,7 +34,8 @@
   border-radius: 24px;
   z-index: 2;
   padding: 40px 24px 30px;
-  width: 440px; /* базовая ширина */
+  width: 440px;
+  /* базовая ширина */
 }
 
 .auth-container h2 {
@@ -42,54 +43,27 @@
   text-align: center;
 }
 
-/* Сообщения об ошибках */
-.error-message {
-  color: #d90707;
-  margin-top: 4px;
-  margin-bottom: 0;
-  text-align: left;
-  background: rgba(255, 142, 142, 0.7);
-  padding: 4px 10px;
-  border-radius: 6px;
-  border-left: 3px solid #d90707;
-  width: 100%;
-  backdrop-filter: blur(4px);
-  opacity: 1;
-}
-
-.error-message:empty {
-  display: none;
-}
-
-/* Кнопка */
-.auth-button {
-  width: 100%;
-  padding: 11px 0 12px;
-  background: #FF4F12;
-  border-radius: 10px;
-  border: 2px solid transparent;
-  line-height: 24px;
+/* В файле стилей, например Login.css или отдельном компоненте */
+.access-tagline {
+  position: absolute;
+  width: 304px;
+  height: 29px;
+  left: 388px;
+  top: 700px;
+  font-family: 'Inter', var(--font-family);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 29px;
+  text-align: right;
   color: #FFFFFF;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-top: 10px;
 }
 
-.auth-button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px);
-  border-color: #FFFFFF;
-}
-
-.auth-button:active:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #FFFFFF;
-  transform: translateY(0);
-}
-
-.auth-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+/* Адаптив для мобильных устройств */
+@media (max-width: 1300px) {
+  .access-tagline {
+    display: none;
+  }
 }
 
 /* ========== ДЕСКТОПНАЯ ВЕРСИЯ (1000px и выше) ========== */

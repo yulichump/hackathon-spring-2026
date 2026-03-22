@@ -20,6 +20,7 @@ h2 {
 
 /* Кнопки */
 .dashboard-btn {
+  position: relative;
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 10px;
@@ -31,21 +32,6 @@ h2 {
   margin-bottom: 20px;
 }
 
-.link-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  color: white;
-}
-
-.link-button:hover {
-  text-decoration: underline;
-  color: #e04510;
-}
-
 /* Блок с приветствием */
 .dashboard-welcome {
   text-align: left;
@@ -54,9 +40,6 @@ h2 {
 
 .dashboard-welcome h2 {
   color: #FFFFFF;
-  font-family: 'Inter', sans-serif;
-  font-size: 24px;
-  font-weight: 600;
   margin-bottom: 8px;
 }
 
@@ -67,16 +50,10 @@ h2 {
 
 .dashboard-user-role-admin {
   color: #FF4F12;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
 }
 
 .dashboard-user-role-staff {
   color: #82EA00;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
 }
 
 /* Кнопка регистрации */
@@ -86,9 +63,6 @@ h2 {
   border-radius: 10px;
   padding: 10px 24px;
   color: #FFFFFF;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
@@ -114,6 +88,27 @@ h2 {
   align-items: center;
 }
 
+/* Обертка для плавного раздвигания */
+.dashboard-qr-wrapper {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.dashboard-qr-wrapper.active {
+  animation: slideExpand 0.5s ease-out forwards;
+}
+
+@keyframes slideExpand {
+  0% {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 /* Плейсхолдер для QR (до генерации) */
 .dashboard-qr-placeholder {
   background: rgba(255, 255, 255, 0.1);
@@ -123,6 +118,7 @@ h2 {
   text-align: center;
   width: 100%;
   max-width: 500px;
+  animation: fadeIn 0.3s ease-out;
 }
 
 /* Активный QR-код */
@@ -134,6 +130,29 @@ h2 {
   text-align: center;
   width: 100%;
   max-width: 400px;
+  animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Обертка QR-кода */
@@ -143,6 +162,11 @@ h2 {
   border-radius: 16px;
   display: inline-block;
   margin-bottom: 20px;
+  transition: transform 0.3s ease;
+}
+
+.dashboard-qr-code:hover {
+  transform: scale(1.02);
 }
 
 /* Информация под QR */
@@ -153,18 +177,17 @@ h2 {
 /* Таймер */
 .dashboard-timer {
   color: #FFFFFF;
-  font-family: 'Inter', sans-serif;
-  font-size: 18px;
   margin-bottom: 20px;
   padding: 12px;
   background: rgba(0, 0, 0, 0.3);
   border-radius: 12px;
+  transition: all 0.3s ease;
 }
 
 .dashboard-timer strong {
-  color: #FF4F12;
   font-size: 24px;
   font-weight: 700;
+  transition: color 0.3s ease;
 }
 
 /* Кнопка генерации QR */
@@ -174,9 +197,6 @@ h2 {
   border-radius: 12px;
   padding: 14px 28px;
   color: #FFFFFF;
-  font-family: 'Inter', sans-serif;
-  font-size: 18px;
-  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   margin-bottom: 16px;
@@ -196,35 +216,11 @@ h2 {
   cursor: not-allowed;
 }
 
-/* Кнопка "Сгенерировать новый" */
-.dashboard-get-new-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 10px;
-  padding: 10px 20px;
-  color: #FFFFFF;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.dashboard-get-new-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
-}
-
-.dashboard-get-new-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 /* Информационный текст */
 .dashboard-info-text {
   color: rgba(255, 255, 255, 0.7);
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
   margin-top: 12px;
+  gap: 10px;
 }
 
 /* Сообщение об ошибке */
@@ -234,8 +230,6 @@ h2 {
   padding: 10px 16px;
   border-radius: 8px;
   border-left: 3px solid #d90707;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
   margin-bottom: 20px;
   backdrop-filter: blur(4px);
   max-width: 500px;
@@ -258,9 +252,6 @@ h2 {
 
 .dashboard-info-panel h3 {
   color: #FFFFFF;
-  font-family: 'Inter', sans-serif;
-  font-size: 20px;
-  font-weight: 600;
   margin-bottom: 16px;
 }
 
@@ -271,8 +262,6 @@ h2 {
 
 .dashboard-info-panel li {
   color: rgba(255, 255, 255, 0.9);
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
   line-height: 1.6;
   margin-bottom: 10px;
   padding-left: 24px;
@@ -322,6 +311,7 @@ h2 {
   .dashboard-qr-placeholder {
     padding: 40px 20px;
     max-width: 100%;
+    z-index: 1;
   }
 
   .dashboard-qr-active {
