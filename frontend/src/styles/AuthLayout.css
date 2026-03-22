@@ -396,3 +396,31 @@
     }
 }
 
+/* Альтернативный вариант: если нужно, чтобы кнопка была именно над формой,
+ * а не просто в углу, раскомментируйте этот блок и закомментируйте верхний */
+/*
+.auth-header {
+    position: absolute;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    z-index: 3;
+}
+
+@media (min-width: 1300px) {
+    .auth-container {
+        margin-top: 60px;
+    }
+    
+    .auth-header {
+        position: relative;
+        width: 100%;
+        max-width: 580px;
+        margin: 0 auto 20px auto;
+    }
+}
+*/

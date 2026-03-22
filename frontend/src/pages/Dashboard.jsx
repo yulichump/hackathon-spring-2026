@@ -11,29 +11,18 @@ import { deleteKey } from '../api/delete_request';
 import { FaUser, FaUsers } from 'react-icons/fa';
 import ProtectedContent from '../pages/ProtectedContent';
 
-/**
- * Dashboard - главная панель управления пользователя
- * Отображает информацию о пользователе, позволяет генерировать QR-код для пропуска
- * и управлять сессией (выход, регистрация новых пользователей для администраторов)
- */
 function Dashboard() {
-  // Состояния для управления QR-ключом
-  const [key, setKey] = useState(null);           // Код ключа для QR-генерации
-  const [timeLeft, setTimeLeft] = useState(null); // Оставшееся время действия ключа
-  const [isActive, setIsActive] = useState(false); // Флаг активности ключа
-  const [isGenerate, setIsGenerate] = useState(false); // Флаг процесса генерации
-  const [timerColor, setTimerColor] = useState('#FFFFFF'); // Цвет таймера (меняется при < 1 минуты)
-  const [expiryTime, setExpiryTime] = useState(null); // Метка времени истечения ключа
-  const [error, setError] = useState(null);        // Состояние для ошибок
+  const [key, setKey] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(null);
+  const [isActive, setIsActive] = useState(false);
+  const [isGenerate, setIsGenerate] = useState(false);
+  const [timerColor, setTimerColor] = useState('#FFFFFF');
+  const [expiryTime, setExpiryTime] = useState(null);
+  const [error, setError] = useState(null); // Добавлен state для error
 
-  const { user, logout } = useAuth();  // Данные пользователя и функция выхода из контекста аутентификации
-  const navigate = useNavigate();       // Хук для программной навигации
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
-  /**
-   * Генерирует новый QR-код пропуска
-   * Если активный ключ существует - удаляет его перед генерацией нового
-   * Сохраняет ключ в localStorage и устанавливает таймер на 5 минут
-   */
   const generateQRCode = async () => {
     if (isActive) {
       try {
@@ -58,7 +47,7 @@ function Dashboard() {
       if (response.data.success) {
         const key = response.data.key;
         setKey(key.key_code);
-        const expiryTime = Date.now() + 5 * 60 * 1000; // 5 минут от текущего момента
+        const expiryTime = Date.now() + 5 * 60 * 1000;
         setIsActive(true);
         setExpiryTime(expiryTime);
 
@@ -79,10 +68,6 @@ function Dashboard() {
     }
   };
 
-  /**
-   * Эффект для восстановления сохраненного ключа при загрузке страницы
-   * Проверяет валидность сохраненного ключа (не истек ли срок действия)
-   */
   useEffect(() => {
     const savedKey = localStorage.getItem('key_code');
     const savedIdKey = localStorage.getItem('key_id');
@@ -103,11 +88,7 @@ function Dashboard() {
     }
   }, []);
 
-  /**
-   * Эффект для управления таймером обратного отсчета
-   * Обновляет оставшееся время каждую секунду, меняет цвет таймера при остатке менее 1 минуты
-   * При истечении времени автоматически деактивирует ключ и удаляет его
-   */
+  // Отдельный useEffect для обновления таймера
   useEffect(() => {
     if (!isActive || !key) return;
 
@@ -157,27 +138,16 @@ function Dashboard() {
     return () => clearInterval(interval);
   }, [isActive, expiryTime, key]);
 
-  /**
-   * Обработчик выхода из системы
-   * Вызывает функцию logout из контекста и перенаправляет на страницу входа
-   */
   const handleLogoutClick = () => {
     logout();
     navigate('/login');
   };
 
-  /**
-   * Обработчик перехода на страницу регистрации
-   * Доступен только для администраторов
-   */
   const handleRegisterClick = () => {
     navigate('/register');
     toast.success('Приступайте к регистрации!');
   };
 
-  /**
-   * Кнопки для отображения в хедере AuthLayout
-   */
   const headerButtons = (
     <>
       <button onClick={handleLogoutClick} className="link-button body-m">
@@ -198,7 +168,6 @@ function Dashboard() {
             <div className="dashboard-user-info">
               <h2 className="heading-h2">Добро пожаловать{user ? `, ${user.full_name}` : ''}!</h2>
               {user && <p className="dashboard-user-email description-l">{user.email}</p>}
-              {/* Отображение роли пользователя с соответствующей иконкой */}
               <p className={user?.role === 1 ? "dashboard-user-role-admin description-l-strong" : "dashboard-user-role-staff description-l-strong"}>
                 {user?.role === 1 ? (
                   <>
@@ -213,7 +182,6 @@ function Dashboard() {
                 )}
               </p>
               <div className="dashboard-header-buttons">
-                {/* Кнопка регистрации видна только администраторам */}
                 {user?.role === 1 && (
                   <button onClick={handleRegisterClick} className="dashboard-btn body-m-strong">
                     Регистрация нового пользователя
@@ -226,7 +194,6 @@ function Dashboard() {
           <div className="dashboard-qr-container">
             <div className={`dashboard-qr-wrapper ${isActive ? 'active' : ''}`}>
               {!isActive ? (
-                /* Состояние без активного QR-кода: отображается кнопка генерации */
                 <div className="dashboard-qr-placeholder">
                   <h1 className="heading-h1">Генерация пропуска</h1>
                   <p className="dashboard-info-text body-m">
@@ -244,7 +211,6 @@ function Dashboard() {
                   </button>
                 </div>
               ) : (
-                /* Состояние с активным QR-кодом: отображается код и таймер */
                 <div className="dashboard-qr-active">
                   <div className="dashboard-qr-code">
                     <QRCodeSVG
